@@ -1,0 +1,1783 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASIA PAYMENT - Dashboard</title>
+<style>
+  :root {
+    --primary: #0055ff;
+    --secondary: #00aaff;
+    --accent: #ff5500;
+    --light: #ffffff;
+    --dark: #212121;
+    --success: #28a745;
+    --warning: #ffc107;
+    --danger: #dc3545;
+    --text-color: #212121;
+    --bg-gradient: linear-gradient(135deg, #0055ff, #00aaff);
+    --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    --hover-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+  }
+  
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  body {
+    margin: 0;
+    background: var(--bg-gradient);
+    color: var(--text-color);
+    min-height: 100vh;
+    padding-bottom: 60px; /* Space for bottom nav */
+    background-attachment: fixed;
+    background-size: cover;
+    position: relative;
+  }
+  
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0) 70%);
+    z-index: -1;
+    pointer-events: none;
+  }
+  
+  /* Header Styles */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    transition: top 0.3s ease;
+  }
+  
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 1;
+  }
+  
+  .menu-toggle {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--primary);
+    padding: 5px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+  }
+  
+  .menu-toggle:hover {
+    background: rgba(0, 85, 255, 0.1);
+    transform: scale(1.1);
+  }
+  
+  .logo-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  header img {
+    height: 40px;
+    transition: transform 0.3s ease;
+  }
+  
+  header img:hover {
+    transform: scale(1.05);
+  }
+  
+  .app-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #000000; /* Warna hitam */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+  }
+  
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+  }
+  
+  button.refresh {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 8px 15px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    box-shadow: 0 4px 15px rgba(0, 85, 255, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  button.refresh::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transform: rotate(30deg);
+    transition: all 0.6s ease;
+    opacity: 0;
+  }
+  
+  button.refresh:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 20px rgba(0, 85, 255, 0.4);
+  }
+  
+  button.refresh:active {
+    transform: translateY(1px);
+  }
+  
+  .options-toggle {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--primary);
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+  }
+  
+  .options-toggle:hover {
+    background: rgba(0, 85, 255, 0.1);
+    transform: scale(1.1);
+  }
+  
+  .options-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    z-index: 110;
+    width: 180px;
+    overflow: hidden;
+    display: none;
+  }
+  
+  .options-menu.show {
+    display: block;
+  }
+  
+  .options-menu button {
+    width: 100%;
+    text-align: left;
+    padding: 12px 15px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+  }
+  
+  .options-menu button:hover {
+    background: rgba(0, 85, 255, 0.1);
+  }
+  
+  .options-menu button i {
+    width: 20px;
+    text-align: center;
+  }
+  
+  .options-menu button.logout {
+    color: var(--danger);
+  }
+  
+  .options-menu button.logout:hover {
+    background: rgba(220, 53, 69, 0.1);
+  }
+  
+  /* Saldo dan Tagline Section - DIUBAH: Susun vertikal */
+  .saldo-tagline-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0 20px;
+    margin: 10px 0;
+    gap: 10px;
+  }
+  
+  .saldo-add-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .saldo-container {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    padding: 8px 15px;
+    border-radius: 30px;
+    box-shadow: 0 4px 10px rgba(0, 85, 255, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    position: relative;
+    overflow: hidden;
+    font-size: 14px;
+  }
+  
+  .saldo-container::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transform: rotate(30deg);
+    animation: shine 3s infinite linear;
+  }
+  
+  @keyframes shine {
+    0% { transform: translateX(-100%) rotate(30deg); }
+    100% { transform: translateX(100%) rotate(30deg); }
+  }
+  
+  .saldo {
+    font-size: 14px;
+    position: relative;
+    z-index: 2;
+  }
+  
+  #saldo {
+    font-size: 14px;
+    letter-spacing: 0.5px;
+  }
+  
+  .add-saldo {
+    background: var(--success);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .add-saldo:hover {
+    transform: scale(1.1);
+    background: #218838;
+  }
+  
+  .tagline {
+    font-size: 14px;
+    color: white;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 8px 15px;
+    border-radius: 30px;
+    font-weight: 500;
+    max-width: 100%;
+    line-height: 1.4;
+    text-align: left;
+  }
+  
+  /* Banner Styles */
+  .banner-container {
+    padding: 0 15px 5px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .banner {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 150px;
+    border-radius: 16px;
+    box-shadow: var(--card-shadow);
+  }
+  
+  .banner-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1s ease, transform 1s ease;
+    transform: scale(1.05);
+  }
+  
+  .banner-slide.active {
+    opacity: 1;
+    transform: scale(1);
+    z-index: 1;
+  }
+  
+  .banner-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .banner-indicators {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 2;
+  }
+  
+  .banner-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .banner-indicator.active {
+    background: white;
+    transform: scale(1.2);
+  }
+  
+  /* Running Text - DIUBAH: Animasi dimulai dari kanan */
+  .running-text-container {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.9); /* Default fallback */
+    padding: 8px 15px;
+    border-radius: 8px;
+    margin: 0 15px 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  
+  .running-text-icon {
+    margin-right: 10px;
+    color: var(--primary);
+    font-size: 18px;
+    animation: pulse 1.5s infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+  
+  #runningText {
+    font-size: 13px;
+    color: var(--dark);
+    font-weight: 500;
+    white-space: nowrap;
+    animation: marquee 20s linear infinite;
+    padding-left: 100%; /* Mulai dari luar layar kanan */
+  }
+  
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+  }
+  
+  /* Menu Styles - 4 kolom per baris di semua ukuran */
+  #menu {
+    max-width: 1200px;
+    margin: 10px auto;
+    padding: 0 15px;
+  }
+  
+  #menu section {
+    margin-bottom: 25px;
+  }
+  
+  #menu h2 {
+    font-size: 18px;
+    margin: 10px 0 8px;
+    color: white;
+    padding: 8px 15px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+  }
+  
+  #menu h2 i {
+    font-size: 16px;
+    min-width: 20px;
+    text-align: center;
+  }
+  
+  .menu {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 kolom per baris di semua ukuran */
+    gap: 10px;
+  }
+  
+  /* DIUBAH: Menu item tanpa card style - minimalis */
+  .menu-item {
+    text-align: center;
+    background: transparent !important; /* Hapus background */
+    border-radius: 0 !important; /* Hapus radius */
+    padding: 12px 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    border: none !important; /* Hapus border */
+    box-shadow: none !important; /* Hapus shadow */
+  }
+  
+  .menu-item:hover {
+    transform: translateY(-5px);
+    border-color: transparent !important;
+  }
+  
+  .menu-item::before {
+    display: none; /* Hapus efek garis atas */
+  }
+  
+  .menu-item:hover::before {
+    transform: scaleX(0); /* Nonaktifkan efek hover */
+  }
+  
+  .menu-item img {
+    height: 45px;
+    margin-bottom: 8px;
+    transition: transform 0.3s ease;
+    max-width: 100%;
+  }
+  
+  .menu-item:hover img {
+    transform: scale(1.1);
+  }
+  
+  .menu-item div {
+    font-size: 12px;
+    font-weight: 600;
+    color: white !important; /* Warna teks mengikuti primaryColor */
+    transition: color 0.3s ease;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .menu-item:hover div {
+    color: var(--primary);
+  }
+  
+  /* Bottom Navigation - DIUBAH: Mengikuti warna header */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    background: rgba(255, 255, 255, 0.95); /* Default fallback */
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    padding: 10px 0;
+  }
+  
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 5px;
+    border-radius: 8px;
+    min-width: 60px;
+    color: #212121; /* Default fallback */
+  }
+  
+  .nav-item:hover {
+    background: rgba(0, 85, 255, 0.1);
+    transform: translateY(-3px);
+  }
+  
+  .nav-item.active {
+    color: var(--primary);
+    font-weight: bold;
+  }
+  
+  .nav-item i {
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+  
+  .nav-item span {
+    font-size: 12px;
+  }
+  
+  /* Sidebar Menu - DIUBAH: Background mengikuti header */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -300px;
+    width: 280px;
+    height: 100%;
+    background: white; /* Default fallback */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    z-index: 200;
+    transition: left 0.3s ease;
+    overflow-y: auto;
+  }
+  
+  .sidebar.open {
+    left: 0;
+  }
+  
+  .sidebar-header {
+    background: var(--bg-gradient);
+    padding: 20px;
+    text-align: center;
+    color: white;
+  }
+  
+  .sidebar-logo {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 15px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .sidebar-logo img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .sidebar-address {
+    font-size: 14px;
+    margin-top: 10px;
+    padding: 10px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .sidebar-menu {
+    padding: 15px 0;
+  }
+  
+  .menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .menu-list li {
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-left: 4px solid transparent;
+    background: white; /* Default fallback */
+    color: #212121; /* Default fallback */
+  }
+  
+  .menu-list li:hover {
+    background: rgba(0, 85, 255, 0.1);
+    border-left: 4px solid var(--primary);
+  }
+  
+  .menu-list li i {
+    font-size: 20px;
+    width: 24px;
+    text-align: center;
+  }
+  
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 150;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    header {
+      padding: 10px 15px;
+    }
+    
+    .menu-toggle {
+      font-size: 20px;
+    }
+    
+    header img {
+      height: 35px;
+    }
+    
+    .app-title {
+      font-size: 16px;
+    }
+    
+    .saldo-container {
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+    
+    button.refresh {
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+    
+    .banner {
+      height: 140px;
+    }
+    
+    .tagline {
+      font-size: 13px;
+      padding: 6px 12px;
+    }
+    
+    .saldo-tagline-container {
+      padding: 0 15px;
+    }
+    
+    /* Tetap 4 kolom di semua ukuran */
+    .menu {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .header-left {
+      gap: 8px;
+    }
+    
+    .menu-toggle {
+      font-size: 18px;
+    }
+    
+    /* PERBAIKAN: Nama aplikasi tetap ditampilkan */
+    .app-title {
+      font-size: 14px;
+      max-width: 100px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    .saldo-container {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+    
+    .saldo, #saldo {
+      font-size: 12px;
+    }
+    
+    .add-saldo {
+      width: 25px;
+      height: 25px;
+      font-size: 18px;
+    }
+    
+    button.refresh {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+    
+    button.refresh span:last-child {
+      display: none;
+    }
+    
+    .tagline {
+      font-size: 12px;
+      padding: 6px 10px;
+    }
+    
+    .banner {
+      height: 120px;
+    }
+    
+    /* Tetap 4 kolom di semua ukuran */
+    .menu {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    
+    .menu-item {
+      padding: 10px 6px;
+    }
+    
+    .menu-item img {
+      height: 40px;
+    }
+    
+    .menu-item div {
+      font-size: 10px;
+    }
+    
+    .nav-item span {
+      font-size: 10px;
+    }
+    
+    .nav-item i {
+      font-size: 18px;
+    }
+  }
+  
+  /* Connection Test */
+  .connection-status {
+    position: fixed;
+    top: -50px; /* Diperbaiki untuk memastikan benar-benar tersembunyi */
+    left: 0;
+    right: 0;
+    background: var(--warning);
+    color: var(--dark);
+    text-align: center;
+    padding: 8px;
+    z-index: 110;
+    transition: top 0.3s ease;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  }
+  /* Sidebar Menu */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -300px;
+  width: 280px;
+  height: 100%;
+  background: linear-gradient(135deg, #0055ff, #00aaff);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  z-index: 200;
+  transition: left 0.3s ease;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar.open {
+  left: 0;
+}
+
+.sidebar-header {
+  padding: 20px;
+  text-align: center;
+  color: white;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-logo {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 15px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-logo img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.sidebar-address {
+  font-size: 14px;
+  margin-top: 10px;
+  padding: 10px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-menu {
+  padding: 15px 0;
+  flex-grow: 1;
+}
+
+.menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-list li {
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-left: 4px solid transparent;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  margin: 5px 10px;
+  border-radius: 8px;
+}
+
+.menu-list li:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-left: 4px solid white;
+}
+
+.menu-list li i {
+  font-size: 20px;
+  width: 24px;
+  text-align: center;
+}
+
+/* Informasi Versi Aplikasi */
+.app-version {
+  padding: 10px 20px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 150;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+  .connection-status.show {
+    top: 0;
+  }
+
+  /* Adjust header position when banners are shown */
+  body.banner-shown header {
+    top: 40px;
+  }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <button class="menu-toggle">☰</button>
+    <div class="logo-container">
+      <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgoChegZIJ3ZMDbPsF24DjVP68tqUjY-kl2-y_TWpfJuJLt1XHPqKEfQI_oL9-cC8iA8GaALbOP7VsgmqDWsPUaTfHSHxp6e_LOGIMy3op4C8m-12nLPXgbYGIxKeKHPb4lnKzztycM5GNBK6QwYvW0omPYX9fduw8c9K6BGj_dAv9-4acxnU1ZF6en4oA/s512/logo_asia_payment.jpg" alt="Logo ASIA PAYMENT">
+      <div class="app-title" id="appTitle">ASIA PAYMENT</div>
+    </div>
+  </div>
+  
+  <div class="header-right">
+    <button class="refresh" onclick="refreshMenu()">
+      <span>🔄</span>
+      <span>Refresh</span>
+    </button>
+    <button class="options-toggle" onclick="toggleOptions()">⋮</button>
+    <div class="options-menu" id="optionsMenu">
+      <button class="logout" onclick="handleLogout()">
+        <i class="fas fa-sign-out-alt"></i>
+        Logout
+      </button>
+      <button onclick="handleExit()">
+        <i class="fas fa-times-circle"></i>
+        Exit
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Connection Status Banner -->
+<div class="connection-status" id="connectionStatus">
+  <i class="fas fa-server"></i> Sedang memeriksa koneksi ke server...
+</div>
+
+<!-- DIUBAH: Susun vertikal saldo dan tagline -->
+<div class="saldo-tagline-container">
+  <div class="saldo-add-container">
+    <div class="saldo-container">
+      <span class="saldo">Saldo:</span>
+      <span id="saldo">Memuat...</span>
+    </div>
+    <button class="add-saldo" onclick="tambahSaldo()">+</button>
+  </div>
+  
+  <div class="tagline" id="tagline">Platform Pembayaran Terlengkap</div>
+</div>
+
+<div class="banner-container">
+  <div class="banner" id="banner">
+    <!-- Banner akan diisi oleh JavaScript dari Firebase -->
+  </div>
+</div>
+
+<div class="running-text-container" id="runningTextContainer">
+  <div class="running-text-icon">📢</div>
+  <marquee id="runningText">Selamat datang di ASIA PAYMENT - Platform pembayaran terlengkap dan terpercaya. Layanan tersedia 24 jam. Jangan ragu menghubungi customer service kami jika mengalami kendala.</marquee>
+</div>
+
+<div id="menu">
+  <!-- Menu akan diisi oleh JavaScript dari Firease -->
+</div>
+
+<!-- Bottom Navigation -->
+<div class="bottom-nav">
+  <div class="nav-item active" onclick="navClick('home')">
+    <i class="fas fa-home"></i>
+    <span>Home</span>
+  </div>
+  <div class="nav-item" onclick="navClick('riwayat')">
+    <i class="fas fa-history"></i>
+    <span>Riwayat</span>
+  </div>
+  <div class="nav-item" onclick="navClick('pembukuan')">
+    <i class="fas fa-book"></i>
+    <span>Pembukuan</span>
+  </div>
+  <div class="nav-item" onclick="navClick('messenger')">
+    <i class="fas fa-comments"></i>
+    <span>Messenger</span>
+  </div>
+  <div class="nav-item" onclick="navClick('akun')">
+    <i class="fas fa-user"></i>
+    <span>Akun</span>
+  </div>
+</div>
+
+<!-- Sidebar Menu -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">
+      <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgoChegZIJ3ZMDbPsF24DjVP68tqUjY-kl2-y_TWpfJuJLt1XHPqKEfQI_oL9-cC8iA8GaALbOP7VsgmqDWsPUaTfHSHxp6e_LOGIMy3op4C8m-12nLPXgbYGIxKeKHPb4lnKzztycM5GNBK6QwYvW0omPYX9fduw8c9K6BGj_dAv9-4acxnU1ZF6en4oA/s512/logo_asia_payment.jpg" alt="Logo">
+    </div>
+    <h3>ASIA PAYMENT</h3>
+    <div class="sidebar-address" id="sidebar-address">
+      Alamat belum diatur
+    </div>
+  </div>
+  
+  <div class="sidebar-menu">
+    <ul class="menu-list">
+      <li onclick="menuClick('transfer')">
+        <i class="fas fa-exchange-alt"></i>
+        <span>Transfer Saldo</span>
+      </li>
+      <li onclick="menuClick('listpengirim')">
+        <i class="fas fa-exchange-alt"></i>
+        <span>List pengirim</span>
+      </li>
+      <li onclick="menuClick('downline')">
+        <i class="fas fa-exchange-alt"></i>
+        <span>Downline</span>
+      </li>
+      <li onclick="menuClick('cs-wa')">
+        <i class="fab fa-whatsapp"></i>
+        <span>CS WhatsApp</span>
+      </li>
+      <li onclick="menuClick('cs-email')">
+        <i class="fas fa-envelope"></i>
+        <span>CS Email</span>
+      </li>
+      <li onclick="menuClick('kunci')">
+        <i class="fas fa-lock"></i>
+        <span>Kunci Aplikasi</span>
+      </li>
+      <li onclick="menuClick('pengaturan')">
+        <i class="fas fa-cog"></i>
+        <span>Pengaturan</span>
+      </li>
+      <li onclick="menuClick('privasi')">
+        <i class="fas fa-shield-alt"></i>
+        <span>Kebijakan Privasi</span>
+      </li>
+      <li onclick="logout()" style="color: var(--danger);">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Logout</span>
+      </li>
+    </ul>
+  </div>
+  
+  <!-- Informasi Versi Aplikasi -->
+  <div class="app-version">
+    Versi 1.0.0
+  </div>
+</div>
+<div class="overlay" id="overlay"></div>
+
+<footer>
+  <!-- Footer content will be minimal as we have bottom nav -->
+</footer>
+
+<script>
+const firebaseUrl = "https://steady-fin-368617-default-rtdb.firebaseio.com/AsiaPayment.json";
+
+// Cek login
+const kodeReseller = localStorage.getItem("kodereseller") || "";
+const nomorHP = localStorage.getItem("nomorhp") || "";
+if (!kodeReseller || !nomorHP) {
+  window.location.href = "login.html";
+}
+
+// Fungsi untuk menyimpan skema warna ke localStorage
+function saveColorScheme(colors) {
+  if (colors) {
+    localStorage.setItem("ColorScheme", JSON.stringify(colors));
+  }
+}
+
+// Fungsi untuk memuat skema warna dari localStorage
+function loadColorScheme() {
+  const colorScheme = JSON.parse(localStorage.getItem("ColorScheme") || "{}");
+  if (Object.keys(colorScheme).length > 0) {
+    applyHeaderColors(colorScheme);
+    return true;
+  }
+  return false;
+}
+
+// Fungsi untuk mengatur warna header berdasarkan data Firebase
+function applyHeaderColors(colors) {
+  // Simpan warna ke localStorage
+  saveColorScheme(colors);
+  
+  const header = document.querySelector('header');
+  const appTitle = document.querySelector('.app-title');
+  const menuToggle = document.querySelector('.menu-toggle');
+  const optionsToggle = document.querySelector('.options-toggle');
+  const refreshButton = document.querySelector('.refresh');
+  const bottomNav = document.querySelector('.bottom-nav');
+  const navItems = document.querySelectorAll('.nav-item');
+  const menuItems = document.querySelectorAll('.menu-item');
+  const menuHeaders = document.querySelectorAll('#menu h2');
+  const runningTextContainer = document.getElementById('runningTextContainer');
+  const sidebar = document.getElementById('sidebar');
+  const menuListItems = document.querySelectorAll('.menu-list li');
+  
+  // Terapkan warna header
+  if (colors?.ColorScheme?.primaryColor) {
+    header.style.background = colors.ColorScheme.primaryColor;
+    header.style.backgroundImage = 'none'; // Hapus gradient jika ada
+    
+    // Terapkan warna yang sama ke bottom navigation
+    bottomNav.style.background = colors.ColorScheme.primaryColor;
+    
+    // DIUBAH: Terapkan warna yang sama ke sidebar dan menu items
+    sidebar.style.background = colors.ColorScheme.primaryColor;
+    menuListItems.forEach(item => {
+      item.style.background = colors.ColorScheme.primaryColor;
+    });
+    
+    if (runningTextContainer) {
+      runningTextContainer.style.background = colors.ColorScheme.primaryColor;
+    }
+  }
+  
+  if (colors?.ColorScheme?.textColor) {
+    appTitle.style.color = colors.ColorScheme.textColor;
+    menuToggle.style.color = colors.ColorScheme.textColor;
+    optionsToggle.style.color = colors.ColorScheme.textColor;
+    refreshButton.style.color = colors.ColorScheme.textColor;
+    
+    // Terapkan warna teks ke bottom navigation
+    navItems.forEach(item => {
+      item.style.color = colors.ColorScheme.textColor;
+    });
+    
+    // DIUBAH: Terapkan warna teks ke menu items dan sidebar items
+    menuItems.forEach(item => {
+      const textDiv = item.querySelector('div');
+      if (textDiv) {
+        textDiv.style.color = colors.ColorScheme.textColor;
+      }
+    });
+    
+    menuListItems.forEach(item => {
+      item.style.color = colors.ColorScheme.textColor;
+    });
+    
+    // Terapkan warna teks ke menu headers
+    menuHeaders.forEach(header => {
+      header.style.color = colors.ColorScheme.textColor;
+    });
+    
+    // DIUBAH: Terapkan warna teks ke running text
+    const runningText = document.getElementById('runningText');
+    if (runningText) {
+      runningText.style.color = colors.ColorScheme.textColor;
+    }
+  }
+}
+
+// Fungsi untuk menguji koneksi ke server OtomaX
+async function testOtomaXConnection() {
+  const connectionStatus = document.getElementById('connectionStatus');
+  
+  // Sembunyikan banner koneksi terlebih dahulu
+  connectionStatus.classList.remove('show');
+  document.body.classList.remove('banner-shown');
+  
+  try {
+    const payload = {
+      name: "ASIA PAYMENT",
+      phone: nomorHP
+    };
+
+    const res = await fetch("http://91.99.163.28:8080/api/Test", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    
+    const data = await res.json();
+    
+    if (data.ok) {
+      // Koneksi berhasil, tidak perlu tampilkan notifikasi
+      return true;
+    } else {
+      // Koneksi gagal, tampilkan notifikasi
+      connectionStatus.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Gagal terhubung ke server: ${data.desc || 'Respon tidak valid'}`;
+      connectionStatus.style.background = 'var(--danger)';
+      connectionStatus.style.color = 'white';
+      connectionStatus.classList.add('show');
+      document.body.classList.add('banner-shown');
+      return false;
+    }
+  } catch (err) {
+    console.error("Error testing OtomaX connection:", err);
+    connectionStatus.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Gagal terhubung ke server: ${err.message || 'Kesalahan jaringan'}`;
+    connectionStatus.style.background = 'var(--danger)';
+    connectionStatus.style.color = 'white';
+    connectionStatus.classList.add('show');
+    document.body.classList.add('banner-shown');
+    return false;
+  }
+}
+
+// Fungsi untuk mengambil ModePriceList dari Firebase dan mengirim ke Kodular
+function sendModePriceListToKodular() {
+  try {
+    const allData = JSON.parse(localStorage.getItem("AllData") || "{}");
+    const modePriceList = allData.Lainnya?.ModePriceList;
+    
+    if (modePriceList !== undefined) {
+      if (window.AppInventor && window.AppInventor.setWebViewString) {
+        window.AppInventor.setWebViewString(JSON.stringify({
+          action: "setModePriceList",
+          mode: modePriceList
+        }));
+        console.log("ModePriceList dikirim ke Kodular:", modePriceList);
+      } else {
+        console.log("ModePriceList (hanya di console):", modePriceList);
+      }
+    } else {
+      console.log("ModePriceList tidak ditemukan di Firebase");
+    }
+  } catch (error) {
+    console.error("Gagal mengambil ModePriceList:", error);
+  }
+}
+
+// Ambil data dari Firebase
+async function refreshMenu() {
+  let originalText = "";
+  try {
+    
+    const button = document.querySelector('.refresh');
+    originalText = button.innerHTML;
+    button.innerHTML = '🔄 Memproses...';
+    button.disabled = true;
+    
+    const res = await fetch(firebaseUrl);
+    const data = await res.json();
+
+    // Simpan semua data ke localStorage
+    localStorage.setItem("AllData", JSON.stringify(data));
+    
+    // Terapkan warna header
+    if (data.Color) {
+      applyHeaderColors(data.Color);
+    }
+    
+    // Kirim ModePriceList ke Kodular
+    sendModePriceListToKodular();
+    
+    // Muat ulang UI tanpa reload halaman
+    loadUI();
+    
+    // Periksa saldo
+    await cekSaldo();
+    
+    // Tampilkan notifikasi sukses
+    document.getElementById('saldo').textContent = "Menu Diperbarui!";
+    document.getElementById('saldo').style.color = "white";
+    
+    setTimeout(() => {
+      // Kembalikan teks saldo normal setelah 2 detik
+      cekSaldo();
+    }, 2000);
+  } catch (e) {
+    console.error("Gagal refresh menu:", e);
+    document.getElementById('saldo').textContent = "Gagal Refresh";
+    document.getElementById('saldo').style.color = "#ffc107";
+  } finally {
+    // Kembalikan tampilan tombol refresh
+    const button = document.querySelector('.refresh');
+    if (button) {
+      button.innerHTML = originalText;
+      button.disabled = false;
+    }
+  }
+}
+
+// Banner Carousel dengan data dari Firebase
+function initBannerCarousel(bannerData) {
+  const bannerDiv = document.getElementById("banner");
+  const indicatorsDiv = document.createElement("div");
+  indicatorsDiv.className = "banner-indicators";
+  
+  // Clear previous content
+  bannerDiv.innerHTML = "";
+  
+  // Ekstrak URL banner dari objek Firebase
+  const bannerUrls = [];
+  for (const key in bannerData) {
+    if (!isNaN(key) && bannerData[key]) {
+      bannerUrls.push(bannerData[key]);
+    }
+  }
+  
+  // Jika tidak ada banner, gunakan default
+  if (bannerUrls.length === 0) {
+    bannerUrls.push(
+      "https://images.unsplash.com/photo-1607082350899-7e105aa886ae?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwa90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1551836022-d5d88e9218df?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80"
+    );
+  }
+  
+  // Add slides
+  bannerUrls.forEach((banner, index) => {
+    const slide = document.createElement("div");
+    slide.className = `banner-slide ${index === 0 ? 'active' : ''}`;
+    slide.innerHTML = `<img src="${banner}" alt="Banner ${index + 1}">`;
+    bannerDiv.appendChild(slide);
+    
+    // Create indicator
+    const indicator = document.createElement("div");
+    indicator.className = `banner-indicator ${index === 0 ? 'active' : ''}`;
+    indicatorsDiv.appendChild(indicator);
+  });
+  
+  bannerDiv.appendChild(indicatorsDiv);
+  
+  const slides = document.querySelectorAll('.banner-slide');
+  const indicators = document.querySelectorAll('.banner-indicator');
+  let currentIndex = 0;
+  
+  function showSlide(index) {
+    slides.forEach(slide => slide.classList.remove('active'));
+    indicators.forEach(indicator => indicator.classList.remove('active'));
+    
+    slides[index].classList.add('active');
+    indicators[index].classList.add('active');
+    
+    currentIndex = index;
+  }
+  
+  // Set click events for indicators
+  indicators.forEach((indicator, index) => {
+    indicator.addEventListener('click', () => showSlide(index));
+  });
+  
+  // Auto slide
+  const interval = bannerData.IntervalPerdetik || 3; // Default 3 detik
+  setInterval(() => {
+    const nextIndex = (currentIndex + 1) % bannerUrls.length;
+    showSlide(nextIndex);
+  }, interval * 1000);
+}
+
+// Cek Saldo dengan endpoint GetSaldoRs
+async function cekSaldo() {
+  
+  // Periksa koneksi ke server OtomaX
+  const isConnected = await testOtomaXConnection();
+  if (!isConnected) {
+    document.getElementById("saldo").textContent = "Gagal koneksi ke server";
+    document.getElementById("saldo").style.color = "#ffc107";
+    return;
+  }
+
+  const payload = {
+    kode: kodeReseller
+  };
+
+  try {
+    const res = await fetch("http://91.99.163.28:8080/api/GetSaldoRs", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    
+    const data = await res.json();
+    
+    if (data.ok && data.result && data.result.saldo !== undefined) {
+      const formattedSaldo = new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0
+      }).format(data.result.saldo);
+      
+      document.getElementById("saldo").textContent = formattedSaldo;
+      document.getElementById("saldo").style.color = "white";
+    } else {
+      document.getElementById("saldo").textContent = data.desc || "Saldo tidak tersedia";
+      document.getElementById("saldo").style.color = "#ffc107";
+    }
+  } catch (err) {
+    console.error("Error saat cek saldo:", err);
+    document.getElementById("saldo").textContent = "Gagal koneksi";
+    document.getElementById("saldo").style.color = "#ffc107";
+  }
+}
+
+// Tampilkan UI dari localStorage
+function loadUI() {
+  // Pertahankan warna yang sudah ada
+  const currentBottomNavColor = document.querySelector('.bottom-nav').style.background;
+  const currentHeaderColor = document.querySelector('header').style.background;
+  
+  const allData = JSON.parse(localStorage.getItem("AllData") || "{}");
+  const colors = allData.Color || {};
+  const textInfo = allData.TextInformation || {};
+  const bannerData = allData.BannerSlide || {};
+  
+  // Ambil data MenuDinamis dari struktur yang benar
+  const menuData = allData.MenuDinamis || {};
+  
+  // Terapkan warna header
+  applyHeaderColors(colors);
+  
+  // Perbaikan alamat di sidebar
+  const officeData = allData.Office || {};
+  const address = officeData.Alamat1 || "Alamat belum diatur";
+  document.getElementById("sidebar-address").textContent = address;
+
+  // Nama aplikasi statis
+  const appTitle = "ASIA PAYMENT";
+  document.getElementById("appTitle").textContent = appTitle;
+
+  // Warna
+  const gradient = (colors.BackgroundGradient || []).filter(c => c);
+  if (colors.ColorScheme) {
+    document.documentElement.style.setProperty('--text-color', colors.ColorScheme.textColor);
+  }
+  
+  if (gradient.length > 0) {
+    document.documentElement.style.setProperty('--bg-gradient', `linear-gradient(135deg, ${gradient.join(",")})`);
+  }
+
+  // Apply colors to sidebar and bottom nav
+  const sidebarHeader = document.querySelector('.sidebar-header');
+  const bottomNav = document.querySelector('.bottom-nav');
+  if (gradient.length > 0) {
+    sidebarHeader.style.background = `linear-gradient(135deg, ${gradient.join(",")})`;
+    bottomNav.style.background = `linear-gradient(135deg, ${gradient.join(",")}), rgba(255,255,255,0.95)`;
+    bottomNav.style.backgroundBlendMode = 'overlay';
+  } else if (colors.ColorScheme && colors.ColorScheme.primaryColor) {
+    sidebarHeader.style.background = colors.ColorScheme.primaryColor;
+    bottomNav.style.background = colors.ColorScheme.primaryColor;
+  }
+
+  // Tagline & Running text
+  if (textInfo.TagLine) {
+    document.getElementById("tagline").textContent = textInfo.TagLine;
+  }
+  
+  if (textInfo.RunningText) {
+    document.getElementById("runningText").textContent = textInfo.RunningText;
+  }
+
+  // Banner dari Firebase
+  initBannerCarousel(bannerData);
+
+  // Menu dinamis - PERBAIKAN UTAMA DI SINI
+  const menuContainer = document.getElementById("menu");
+  menuContainer.innerHTML = "";
+  
+  // Pastikan data menu ada dan struktur benar
+  if (menuData && menuData.category && menuData.Menu) {
+    const categories = Object.entries(menuData.category)
+      .sort((a, b) => (a[1].Urutan || 0) - (b[1].Urutan || 0));
+    
+    categories.forEach(([catName, catInfo]) => {
+      const items = menuData.Menu[catName];
+      if (items) {
+        const section = document.createElement("section");
+        const catTitle = document.createElement("h2");
+        
+        // PERBAIKAN: Tambahkan icon kategori dari Firebase
+        const iconElement = document.createElement("i");
+        iconElement.className = `fas ${catInfo.Icon || 'fa-mobile-alt'}`;
+        catTitle.appendChild(iconElement);
+        catTitle.appendChild(document.createTextNode(` ${catName}`));
+        
+        section.appendChild(catTitle);
+
+        const grid = document.createElement("div");
+        grid.className = "menu";
+        
+        // PERBAIKAN: Urutkan menu berdasarkan field 'order'
+        const sortedItems = Object.entries(items).sort((a, b) => {
+          const orderA = a[1].order || 0;
+          const orderB = b[1].order || 0;
+          return orderA - orderB;
+        });
+        
+        sortedItems.forEach(([itemName, menuItem]) => {
+          const iconUrl = menuItem.iconUrl || "https://via.placeholder.com/45?text=Icon";
+          
+          const div = document.createElement("div");
+          div.className = "menu-item";
+          div.innerHTML = `<img src="${iconUrl}" alt="${itemName}" onerror="this.src='https://via.placeholder.com/45?text=Icon'"><div>${itemName}</div>`;
+          
+          div.addEventListener("click", () => {
+            localStorage.setItem("selectedCategory", catName);
+            localStorage.setItem("selectedMenu", itemName);
+            localStorage.setItem("selectedIcon", iconUrl);
+            
+            // PERBAIKAN: Simpan field type dari Firebase
+            localStorage.setItem("selectedType", menuItem.type || "");
+            
+            // Simpan path sesuai struktur consoleAsiapayment
+            const path = `AsiaPayment/MenuDinamis/Items/${catName}/${itemName}.json`;
+            localStorage.setItem("selectedPath", path);
+
+            if (window.AppInventor && window.AppInventor.setWebViewString) {
+              window.AppInventor.setWebViewString(JSON.stringify({
+  category: catName,
+  menu: itemName,
+  path: path,
+  icon: iconUrl,
+  type: menuItem.type || "",
+  url: menuItem.url || ""  // <--- tambah ini
+}));
+            } else {
+              console.log("Tidak di Kodular, data:", { 
+                category: catName, 
+                menu: itemName, 
+                path: path,
+                type: menuItem.type || ""
+              });
+            }
+          });
+          
+          grid.appendChild(div);
+        });
+
+        section.appendChild(grid);
+        menuContainer.appendChild(section);
+      }
+    });
+  } else {
+    // Jika data menu tidak ditemukan, tampilkan menu default
+    const defaultMenuData = {
+      "Pembayaran": {
+        "PLN": { iconUrl: "https://via.placeholder.com/45?text=PLN", order: 1 },
+        "PDAM": { iconUrl: "https://via.placeholder.com/45?text=PDAM", order: 2 },
+        "Telkom": { iconUrl: "https://via.placeholder.com/45?text=Telkom", order: 3 },
+        "Internet": { iconUrl: "https://via.placeholder.com/45?text=Internet", order: 4 }
+      },
+      "Pulsa & Data": {
+        "Pulsa": { iconUrl: "https://via.placeholder.com/45?text=Pulsa", order: 1 },
+        "Data": { iconUrl: "https://via.placeholder.com/45?text=Data", order: 2 },
+        "Paket SMS": { iconUrl: "https://via.placeholder.com/45?text=SMS", order: 3 }
+      },
+      "E-Wallet": {
+        "Gopay": { iconUrl: "https://via.placeholder.com/45?text=Gopay", order: 1 },
+        "OVO": { iconUrl: "https://via.placeholder.com/45?text=OVO", order: 2 },
+        "Dana": { iconUrl: "https://via.placeholder.com/45?text=Dana", order: 3 },
+        "LinkAja": { iconUrl: "https://via.placeholder.com/45?text=LinkAja", order: 4 }
+      }
+    };
+    
+    Object.entries(defaultMenuData).forEach(([category, items]) => {
+      const section = document.createElement("section");
+      const catTitle = document.createElement("h2");
+      
+      const iconElement = document.createElement("i");
+      iconElement.className = "fa fa-mobile-alt";
+      catTitle.appendChild(iconElement);
+      catTitle.appendChild(document.createTextNode(` ${category}`));
+      
+      section.appendChild(catTitle);
+
+      const grid = document.createElement("div");
+      grid.className = "menu";
+      
+      Object.entries(items).forEach(([itemName, menuItem]) => {
+        const div = document.createElement("div");
+        div.className = "menu-item";
+        div.innerHTML = `<img src="${menuItem.iconUrl}" alt="${itemName}"><div>${itemName}</div>`;
+        
+        div.addEventListener("click", () => {
+          console.log(`Menu ${itemName} diklik`);
+        });
+        
+        grid.appendChild(div);
+      });
+
+      section.appendChild(grid);
+      menuContainer.appendChild(section);
+    });
+  }
+  
+  // Jika warna sudah diatur, jangan timpa dengan nilai default
+  if (currentBottomNavColor) {
+    document.querySelector('.bottom-nav').style.background = currentBottomNavColor;
+  }
+  
+  if (currentHeaderColor) {
+    document.querySelector('header').style.background = currentHeaderColor;
+  }
+  
+  // Kirim ModePriceList ke Kodular setelah UI dimuat
+  sendModePriceListToKodular();
+}
+
+// Toggle sidebar
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('active');
+}
+
+// Toggle options menu
+function toggleOptions() {
+  const optionsMenu = document.getElementById('optionsMenu');
+  optionsMenu.classList.toggle('show');
+}
+
+// Close options menu when clicking outside
+document.addEventListener('click', function(event) {
+  const optionsMenu = document.getElementById('optionsMenu');
+  const optionsToggle = document.querySelector('.options-toggle');
+  
+  if (!optionsMenu.contains(event.target) && !optionsToggle.contains(event.target)) {
+    optionsMenu.classList.remove('show');
+  }
+});
+
+// Tambah saldo
+function tambahSaldo() {
+  if (window.AppInventor && window.AppInventor.setWebViewString) {
+    window.AppInventor.setWebViewString(JSON.stringify({
+      action: "tambah_saldo"
+    }));
+  } else {
+    alert("Fitur tambah saldo akan dijalankan");
+  }
+}
+
+// Navigasi bottom
+function navClick(page) {
+  if (window.AppInventor && window.AppInventor.setWebViewString) {
+    window.AppInventor.setWebViewString(JSON.stringify({
+      action: "navigate",
+      page: page
+    }));
+  } else {
+    console.log("Navigasi ke halaman:", page);
+  }
+  
+  // Update active state
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.classList.remove('active');
+  });
+  event.currentTarget.classList.add('active');
+}
+
+// Menu sidebar click
+function menuClick(item) {
+  const allData = JSON.parse(localStorage.getItem("AllData") || "{}");
+  
+  if (item === 'cs-wa') {
+    // Ambil nomor WhatsApp dari Firebase
+    const whatsappNumber = allData.customerService?.WhatsApp || "";
+    
+    if (window.AppInventor && window.AppInventor.setWebViewString) {
+      window.AppInventor.setWebViewString(JSON.stringify({
+        action: "cs_whatsapp",
+        number: whatsappNumber
+      }));
+    } else {
+      console.log("CS WhatsApp:", whatsappNumber);
+      // Fallback untuk browser: buka WhatsApp
+      if (whatsappNumber) {
+        window.open(`https://wa.me/${whatsappNumber}`, '_blank');
+      }
+    }
+  } 
+  else if (item === 'cs-email') {
+    // Ambil email dari Firebase
+    const email = allData.customerService?.email || "";
+    
+    if (window.AppInventor && window.AppInventor.setWebViewString) {
+      window.AppInventor.setWebViewString(JSON.stringify({
+        action: "cs_email",
+        email: email
+      }));
+    } else {
+      console.log("CS Email:", email);
+      // Fallback untuk browser: buka email client
+      if (email) {
+        window.open(`mailto:${email}`, '_blank');
+      }
+    }
+  } 
+  else {
+    // Untuk menu lainnya
+    if (window.AppInventor && window.AppInventor.setWebViewString) {
+      window.AppInventor.setWebViewString(JSON.stringify({
+        action: "menu",
+        item: item
+      }));
+    } else {
+      console.log("Menu dipilih:", item);
+    }
+  }
+  
+  // Tutup sidebar setelah memilih menu
+  toggleSidebar();
+}
+
+// Logout
+function logout() {
+  localStorage.removeItem("kodereseller");
+  localStorage.removeItem("nomorhp");
+  localStorage.removeItem("ColorScheme"); // Hapus juga skema warna
+  
+  if (window.AppInventor && window.AppInventor.setWebViewString) {
+    window.AppInventor.setWebViewString(JSON.stringify({
+      action: "logout"
+    }));
+  } else {
+    window.location.href = "login.html";
+  }
+}
+
+// Handle logout from options menu
+function handleLogout() {
+  logout();
+  document.getElementById('optionsMenu').classList.remove('show');
+}
+
+// Handle exit from options menu
+function handleExit() {
+  if (window.AppInventor && window.AppInventor.setWebViewString) {
+    window.AppInventor.setWebViewString(JSON.stringify({
+      action: "exit"
+    }));
+  } else {
+    console.log("Aplikasi akan keluar");
+  }
+  document.getElementById('optionsMenu').classList.remove('show');
+}
+
+// Jalankan
+document.addEventListener('DOMContentLoaded', () => {
+  // Coba terapkan warna dari localStorage terlebih dahulu
+  const hasColorScheme = loadColorScheme();
+  
+  // Jika data belum ada, lakukan fetch pertama kali
+  if (!localStorage.getItem("AllData")) {
+    refreshMenu();
+  } else {
+    // Jika data sudah ada, langsung load UI
+    loadUI();
+    cekSaldo();
+    
+    // Jika belum ada warna yang diterapkan, coba ambil dari localStorage AllData
+    if (!hasColorScheme) {
+      const allData = JSON.parse(localStorage.getItem("AllData") || "{}");
+      if (allData.Color) {
+        applyHeaderColors(allData.Color);
+      }
+    }
+  }
+  
+  // Tambahkan event listener untuk tombol menu
+  document.querySelector('.menu-toggle').addEventListener('click', toggleSidebar);
+  
+  // Tutup sidebar saat overlay diklik
+  document.getElementById('overlay').addEventListener('click', toggleSidebar);
+});
+</script>
+
+</body>
+</html>
